@@ -1,0 +1,18 @@
+# Netlify settings for the TSEC Placement Portal.
+# Pages come from public/; every /api/... request runs the backend in netlify/functions/api.mjs
+# (its route is set inside that file: config.path = "/api/*").
+
+[build]
+  command   = "npm run build:netlify"
+  publish   = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+  # Shipped as normal packages (not bundled): sql.js needs its .wasm file next to it.
+  # sql.js loads this file at runtime; Netlify can't detect that by itself.
+  included_files = ["node_modules/sql.js/dist/sql-wasm.wasm"]
+  external_node_modules = ["sql.js", "express", "express-session", "multer", "nodemailer", "bcryptjs", "serverless-http", "@netlify/blobs"]
